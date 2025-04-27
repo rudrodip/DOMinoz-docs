@@ -1,0 +1,17 @@
+{
+  "name": "dominoz-docs",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "bun build index.ts --outfile dist/index.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "dominoz": "^0.0.2-beta.3"
+  }
+}
