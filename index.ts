@@ -438,17 +438,15 @@ function InputExample() {
 function DocumentTitleExample() {
   const [count, setCount] = useSignal(0);
 
-  // useAfter hook to update the document title when count changes
   useAfter(() => {
     document.title = `DOMinoz Counter: ${count}`;
     console.log(`useAfter: Document title updated to 'DOMinoz Counter: ${count}'`);
 
-    // Optional cleanup function: Reset title when component unmounts
     return () => {
-      document.title = "DOMinoz Docs";
+      document.title = "DOMinoz";
       console.log("useAfter cleanup: Reset document title");
     };
-  }, [count]); // Dependency array: effect runs only when count changes
+  }, [count]);
 
   return createElement(
     "div",
@@ -466,19 +464,15 @@ const documentTitleExampleCode = `
 function DocumentTitleExample() {
   const [count, setCount] = useSignal(0);
 
-  // useAfter hook to update the document title when count changes
   useAfter(() => {
-    // Side effect: Update the browser tab's title
     document.title = \`DOMinoz Counter: \${count}\`;
     console.log(\`useAfter: Document title updated to 'DOMinoz Counter: \${count}'\`);
 
-    // Optional: Return a cleanup function
-    // This runs when the component unmounts or before the effect runs again
     return () => {
-      document.title = "DOMinoz Docs"; // Reset title on unmount
+      document.title = "DOMinoz Docs";
       console.log("useAfter cleanup: Reset document title");
     };
-  }, [count]); // Dependency array: effect runs only when count changes
+  }, [count]);
 
   return createElement(
     'div',
@@ -489,22 +483,18 @@ function DocumentTitleExample() {
 }`;
 
 
-// useAnchor Example: Focus Input on Mount
 function InputFocusExample() {
-  // Create an anchor (ref) to hold the input element
   const inputRef = useAnchor<HTMLInputElement | null>(null);
 
-  // useAfter with empty dependency array runs only once after the initial render
   useAfter(() => {
-    // Access the DOM element via inputRef.current and focus it
     if (inputRef.current) {
-      inputRef.current.focus();
-      console.log("useAfter (mount): Focused input element.");
+      inputRef.current.focus({ preventScroll: true });
+      console.log("useAfter (mount): Focused input element without scrolling.");
     }
-  }, []); // Empty array means run only once on mount
+  }, []);
 
   const handleFocusClick = () => {
-    inputRef.current?.focus(); // Re-focus using the ref
+    inputRef.current?.focus();
     console.log("Button Click: Re-focused input element.");
   };
 
@@ -512,13 +502,13 @@ function InputFocusExample() {
     "div",
     {},
     createElement("input", {
-      ref: inputRef, // Attach the anchor to the input element
+      ref: inputRef,
       type: "text",
-      placeholder: "I should be focused!",
+      placeholder: "I should be focused (no scroll)!",
     }),
     createElement(
       "button",
-      { onclick: handleFocusClick, style: { marginTop: '8px' } },
+      { onclick: handleFocusClick, style: { marginTop: "8px" } },
       "Re-focus Input"
     )
   );
@@ -526,23 +516,16 @@ function InputFocusExample() {
 
 const inputFocusExampleCode = `
 function InputFocusExample() {
-  // 1. Create an anchor (ref) to hold the input element reference.
-  //    The generic <HTMLInputElement | null> provides type safety.
   const inputRef = useAnchor<HTMLInputElement | null>(null);
 
-  // 2. Use useAfter with an empty dependency array ([]) to run an effect
-  //    only once after the component mounts (initial render).
   useAfter(() => {
-    // Access the actual DOM element via inputRef.current
     if (inputRef.current) {
-      inputRef.current.focus(); // Call the native focus() method
-      console.log("useAfter (mount): Focused input element.");
+      inputRef.current.focus({ preventScroll: true });
+      console.log("useAfter (mount): Focused input element without scrolling.");
     }
-    // No cleanup needed for this effect
-  }, []); // Empty dependency array means run only once on mount
+  }, []);
 
   const handleFocusClick = () => {
-    // You can access the ref anytime to interact with the element
     inputRef.current?.focus();
     console.log("Button Click: Re-focused input element.");
   };
@@ -550,11 +533,10 @@ function InputFocusExample() {
   return createElement(
     'div',
     {},
-    // 3. Assign the ref to the desired element using the 'ref' prop.
     createElement('input', {
       ref: inputRef,
       type: 'text',
-      placeholder: 'I should be focused!'
+      placeholder: 'I should be focused (no scroll)!'
     }),
     createElement(
       'button',
@@ -564,9 +546,6 @@ function InputFocusExample() {
   );
 }`;
 
-
-// --- App Structure ---
-
 function AppHeader() {
   return createElement(
     "header",
@@ -575,7 +554,7 @@ function AppHeader() {
       "a",
       { href: "#", class: "logo" },
       createElement("img", {
-        src: "/public/favicon-light.png",
+        src: "/public/favicon-dark.png",
         alt: "DOMinoz Logo",
       }),
       "DOMinoz Docs"
@@ -678,11 +657,11 @@ function App() {
 import { createElement, render, useSignal } from 'dominoz';
 
 function MyComponent() {
-const [msg, setMsg] = useSignal('Hello DOMinoz!');
-return createElement('div', {},
-  createElement('h1', {}, msg),
-  createElement('button', { onclick: () => setMsg('Updated!') }, 'Click Me')
-);
+  const [msg, setMsg] = useSignal('Hello DOMinoz!');
+  return createElement('div', {},
+    createElement('h1', {}, msg),
+    createElement('button', { onclick: () => setMsg('Updated!') }, 'Click Me')
+  );
 }
 
 const root = document.getElementById('root');
@@ -727,10 +706,10 @@ if (root) render(createElement(MyComponent), root);
       createElement(CodeBlock, {
         code: `
 interface VNode {
-type: string | ComponentFunction; // e.g., 'div' or MyComponent
-props: Record<string, any>;      // Attributes, event listeners, etc.
-children: (VNode | string)[];    // Child nodes or text (as received by component)
-key?: string | number;           // Optional key for list reconciliation
+  type: string | ComponentFunction; // e.g., 'div' or MyComponent
+  props: Record<string, any>;      // Attributes, event listeners, etc.
+  children: (VNode | string)[];    // Child nodes or text (as received by component)
+  key?: string | number;           // Optional key for list reconciliation
 }`,
       }),
       createElement(Paragraph, {
@@ -842,7 +821,6 @@ key?: string | number;           // Optional key for list reconciliation
         { title: "Live Input (useSignal)", code: inputExampleCode },
         createElement(InputExample)
       ),
-      // --- Add the new examples here ---
       createElement(
         InteractiveExample,
         { title: "Side Effect (useAfter - Document Title)", code: documentTitleExampleCode },
